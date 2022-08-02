@@ -1,0 +1,129 @@
+<mat-stepper linear #stepper>
+    <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
+
+        <section class="example-section">
+            <mat-radio-group>
+                <mat-radio-button color="primary" class="example-margin" value="after">Male</mat-radio-button>
+                <mat-radio-button color="primary" class="example-margin" value="before">Female</mat-radio-button>
+            </mat-radio-group>
+        </section>
+
+        <form [formGroup]="firstFormGroup" (ngSubmit)="saveFormData()">
+            <ng-template matStepLabel>First Step</ng-template>
+
+            <!-- LAST NAME  -->
+            <ng-container *ngIf="lastNameValid">
+                <small class="error" *ngIf="maxLengthLastName">
+                    Please max. 20 charackters
+                </small>
+                <small class="error" *ngIf="lastNameRequired">
+                    Last Name is required!!
+                </small>
+            </ng-container>
+
+            <div fxLayout="row" fxLayoutGap="10px">
+                <mat-form-field appearance="outline" style="width: 50%;">
+                    <mat-label>Lastname</mat-label>
+                    <input type="text" matInput formControlName="lastname" placeholder="Lastname" required>
+                </mat-form-field>
+
+                <!-- FIRST NAME -->
+                <ng-container *ngIf="firstNameValid">
+                    <small class="error" *ngIf="maxLengthFirstname">
+                        Please max. 20 charackters
+                    </small>
+                    <small class="error" *ngIf="firstNameRequired">
+                        First Name is required!!
+                    </small>
+                </ng-container>
+
+                <mat-form-field appearance="outline" style="width: 50%;">
+                    <mat-label>Firstname</mat-label>
+                    <input type="text" matInput formControlName="firstname" placeholder="Firstname" required>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="10px">
+                <!-- COUNTRY -->
+                <mat-form-field appearance="outline" style="width: 50%;">
+                    <mat-label>Country</mat-label>
+                    <mat-select formControlName="country" required>
+                        <mat-option value="Germany" *ngFor="let country of selectedCountry"
+                            (click)="handleSelectedCountry(country.extradetails)">
+                            {{country.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- DATE -->
+                <mat-form-field appearance="outline" style="width: 50%;">
+                    <mat-label>Date of Birth</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Date of Birth"
+                        required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <!-- STREET -->
+            <ng-container *ngIf="streetValid">
+                <small class="error" *ngIf="streetMaxLength">
+                    Please max. 25 charackters
+                </small>
+                <small class="error" *ngIf="streetRequired">
+                    Street is required!!
+                </small>
+            </ng-container>
+
+            <div fxLayout="row" fxLayoutGap="10px" *ngIf="inputVisible">
+                <mat-form-field appearance="outline" style="width: 50%;">
+                    <mat-label>Street</mat-label>
+                    <input matInput formControlName="street" placeholder="Street" required="{{inputVisible}}">
+                </mat-form-field>
+
+                <!-- CITY -->
+                <ng-container *ngIf="cityValid">
+                    <small class="error" *ngIf="cityMaxLength">
+                        Please max. 25 charackters
+                    </small>
+                    <small class="error" *ngIf="cityRequired">
+                        City is required!!
+                    </small>
+                </ng-container>
+
+                <mat-form-field appearance="outline" style="width: 50%;">
+                    <mat-label>City</mat-label>
+                    <input type="text" matInput formControlName="city" placeholder="City" required="{{inputVisible}}">
+                </mat-form-field>
+            </div>
+
+            <div fxLayoutAlign="end">
+                <button mat-button color="warn" (click)="openDialog()">Reset</button>
+                <button [disabled]="!firstFormGroup.valid" mat-button matStepperNext color="primary"
+                    type="submit">Next</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <mat-step [stepControl]="secondFormGroup" [editable]="isEditable">
+        <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Second Step</ng-template>
+            <mat-form-field appearance="fill">
+                <mat-label>Address</mat-label>
+                <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY" required>
+            </mat-form-field>
+            <div>
+                <button mat-button matStepperPrevious color="accent">Back</button>
+                <button mat-button matStepperNext color="primary">Next</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Last Step</ng-template>
+        <p>You are now done.</p>
+        <div>
+            <button mat-button matStepperPrevious color="accent">Back</button>
+
+        </div>
+    </mat-step>
+</mat-stepper>
