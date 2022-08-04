@@ -1,4 +1,4 @@
-import { Component, Inject} from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -8,14 +8,17 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class DialogComponent {
 
-  constructor(public dialogRef: MatDialogRef<DialogComponent>, @Inject(MAT_DIALOG_DATA) public data :any) { }
+  constructor(
+    public dialogRef: MatDialogRef<DialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) { }
 
- onCancel(): void {
-  this.dialogRef.close(false);
- }
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
 
- onConfirm(): void {
-  this.dialogRef.close(true)
- }
+  onConfirm(): void {
+    this.dialogRef.close(true)
+  }
 }
 

@@ -8,8 +8,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class SecondStepComponent implements OnInit {
 
+  secondFormGroup = this._formBuilder.group({
+    secondCtrl: ['', Validators.required],
+  });
+  isEditable = false;
 
-  constructor(){}
+  constructor(private _formBuilder : FormBuilder){}
 
   ngOnInit(): void {}
 

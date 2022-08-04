@@ -1,5 +1,5 @@
 <mat-stepper linear #stepper>
-    <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
+    <mat-step [stepControl]="firstForm" [editable]="isEditable">
 
         <section class="example-section">
             <mat-radio-group>
@@ -8,24 +8,24 @@
             </mat-radio-group>
         </section>
 
-        <form [formGroup]="firstFormGroup" (ngSubmit)="saveFormData()">
+        <form [formGroup]="firstForm">
             <ng-template matStepLabel>First Step</ng-template>
 
-            <!-- LAST NAME  -->
-            <ng-container *ngIf="lastNameValid">
-                <small class="error" *ngIf="maxLengthLastName">
-                    Please max. 20 charackters
-                </small>
-                <small class="error" *ngIf="lastNameRequired">
-                    Last Name is required!!
-                </small>
-            </ng-container>
-
+            <!-- SURENAME  -->
             <div fxLayout="row" fxLayoutGap="10px">
-                <mat-form-field appearance="outline" style="width: 50%;">
-                    <mat-label>Lastname</mat-label>
-                    <input type="text" matInput formControlName="lastname" placeholder="Lastname" required>
+                <mat-form-field appearance="outline" class="w-50perc">
+                    <mat-label>Surename</mat-label>
+                    <input type="text" matInput formControlName="surename" placeholder="surename" required>
                 </mat-form-field>
+
+                <ng-container *ngIf="surenameValid">
+                    <small class="error" *ngIf="maxLengthsurename">
+                        Please max. 20 charackters
+                    </small>
+                    <small class="error" *ngIf="surenameRequired">
+                        Surename is required!!
+                    </small>
+                </ng-container>
 
                 <!-- FIRST NAME -->
                 <ng-container *ngIf="firstNameValid">
@@ -37,15 +37,15 @@
                     </small>
                 </ng-container>
 
-                <mat-form-field appearance="outline" style="width: 50%;">
+                <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>Firstname</mat-label>
                     <input type="text" matInput formControlName="firstname" placeholder="Firstname" required>
                 </mat-form-field>
             </div>
 
+            <!-- COUNTRY -->
             <div fxLayout="row" fxLayoutGap="10px">
-                <!-- COUNTRY -->
-                <mat-form-field appearance="outline" style="width: 50%;">
+                <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>Country</mat-label>
                     <mat-select formControlName="country" required>
                         <mat-option value="Germany" *ngFor="let country of selectedCountry"
@@ -56,7 +56,7 @@
                 </mat-form-field>
 
                 <!-- DATE -->
-                <mat-form-field appearance="outline" style="width: 50%;">
+                <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>Date of Birth</mat-label>
                     <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Date of Birth"
                         required>
@@ -66,64 +66,151 @@
             </div>
 
             <!-- STREET -->
-            <ng-container *ngIf="streetValid">
-                <small class="error" *ngIf="streetMaxLength">
-                    Please max. 25 charackters
-                </small>
-                <small class="error" *ngIf="streetRequired">
-                    Street is required!!
-                </small>
-            </ng-container>
-
             <div fxLayout="row" fxLayoutGap="10px" *ngIf="inputVisible">
-                <mat-form-field appearance="outline" style="width: 50%;">
+                <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>Street</mat-label>
                     <input matInput formControlName="street" placeholder="Street" required="{{inputVisible}}">
                 </mat-form-field>
 
-                <!-- CITY -->
-                <ng-container *ngIf="cityValid">
-                    <small class="error" *ngIf="cityMaxLength">
+                <ng-container *ngIf="streetValid">
+                    <small class="error" *ngIf="streetMaxLength">
                         Please max. 25 charackters
                     </small>
-                    <small class="error" *ngIf="cityRequired">
-                        City is required!!
+                    <small class="error" *ngIf="streetRequired">
+                        Street is required!!
                     </small>
                 </ng-container>
 
-                <mat-form-field appearance="outline" style="width: 50%;">
+
+                <!-- CITY -->
+                <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>City</mat-label>
                     <input type="text" matInput formControlName="city" placeholder="City" required="{{inputVisible}}">
                 </mat-form-field>
             </div>
 
+            <ng-container *ngIf="cityValid">
+                <small class="error" *ngIf="cityMaxLength">
+                    Please max. 25 charackters
+                </small>
+                <small class="error" *ngIf="cityRequired">
+                    City is required!!
+                </small>
+            </ng-container>
+
             <div fxLayoutAlign="end">
                 <button mat-button color="warn" (click)="openDialog()">Reset</button>
-                <button [disabled]="!firstFormGroup.valid" mat-button matStepperNext color="primary"
-                    type="submit">Next</button>
+                <button [disabled]="!firstForm.valid" mat-button matStepperNext color="primary"
+                    (click)='saveFirstForm()'>
+                    Next
+                </button>
             </div>
         </form>
     </mat-step>
 
-    <mat-step [stepControl]="secondFormGroup" [editable]="isEditable">
-        <form [formGroup]="secondFormGroup">
+
+    <!-- ### SECOND STEP ### -->
+    <form [formGroup]="secondForm">
+        <mat-step [stepControl]="secondForm" [editable]="isEditable">
+            <!-- <form [formGroup]="form"> -->
             <ng-template matStepLabel>Second Step</ng-template>
-            <mat-form-field appearance="fill">
-                <mat-label>Address</mat-label>
-                <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY" required>
-            </mat-form-field>
+
+            <div fxLayoutAlign="space-between center" fxLayoutGap="20px">
+                <!-- TELEFON -->
+                <mat-form-field class="w-50perc" appearance="outline">
+                    <mat-label>Telefon</mat-label>
+                    <input matInput min="0" formControlName="tel" type="number" placeholder="Telefon" required>
+                </mat-form-field>
+
+                <!-- EMAIL -->
+                <mat-form-field class="w-50perc" appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" placeholder="example@exam.com" required>
+                </mat-form-field>
+            </div>
+
+            <!-- SOCIAL MEDIA -->
+            <div fxLayout="row">
+                <div>
+                    <mat-checkbox (change)="handleFbInput($event)">
+                        Facebook
+                    </mat-checkbox>
+                </div>
+
+                <div>
+                    <mat-checkbox (change)="handleInstaInput($event)">
+                        Instagram
+                    </mat-checkbox>
+                </div>
+
+                <div>
+                    <mat-checkbox (change)="handleTweetInput($event)">
+                        Twitter
+                    </mat-checkbox>
+                </div>
+
+                <div>
+                    <mat-checkbox (change)="handleYtInput($event)">
+                        Youtube
+                    </mat-checkbox>
+                </div>
+
+                <div flexLayout="column" fxLayoutGap="30px" class="w-100perc">
+                    <div>
+                        <mat-form-field class="w-100perc" *ngIf="isFbChecked" appearance="outline">
+                            <mat-label>Facebook</mat-label>
+                            <input matInput maxlength="30" formControlName="fb" placeholder="Facebook" required="{{isFbChecked}}">
+                        </mat-form-field>
+
+                        <mat-form-field class="w-100perc" *ngIf="isInstaChecked" appearance="outline">
+                            <mat-label>Instagram</mat-label>
+                            <input matInput formControlName="insta" placeholder="Instagram" required="{{isInstaChecked}}">
+                        </mat-form-field>
+
+                        <mat-form-field class="w-100perc" *ngIf="isTweetChecked" appearance="outline">
+                            <mat-label>Twitter</mat-label>
+                            <input matInput formControlName="tweet" placeholder="Twitter" required="{{isTweetChecked}}">
+                        </mat-form-field>
+                    </div>
+                </div>
+
+            </div>
+
+            <div>
+                <button mat-button matStepperPrevious color="warn">Back</button>
+                <button mat-button matStepperNext color="primary" [disabled]="!secondForm.valid"
+                    (click)="saveSecondForm()">
+                    Next
+                </button>
+            </div>
+        </mat-step>
+
+    </form>
+
+
+    <!-- ### LAST STEP ### -->
+    <form [formGroup]="thirdForm">
+        <mat-step>
+
+            <div fxLayout="column">
+                <mat-slide-toggle (change)="handleTextArea($event)">I Want write Message</mat-slide-toggle>
+
+                <mat-form-field appearance="outline" fxFlex="100">
+                    <mat-label>Textarea</mat-label>
+                    <textarea matInput maxlength="250" rows="5"
+                    formControlName="message"></textarea>
+                </mat-form-field>
+
+                <mat-checkbox (change)="handleAgree($event)">
+                    I Agree
+                </mat-checkbox>
+            </div>
+
             <div>
                 <button mat-button matStepperPrevious color="accent">Back</button>
-                <button mat-button matStepperNext color="primary">Next</button>
+                <button mat-button color="primary" (click)="submitForm()">Save</button>
             </div>
-        </form>
-    </mat-step>
-    <mat-step>
-        <ng-template matStepLabel>Last Step</ng-template>
-        <p>You are now done.</p>
-        <div>
-            <button mat-button matStepperPrevious color="accent">Back</button>
+        </mat-step>
+    </form>
 
-        </div>
-    </mat-step>
 </mat-stepper>
