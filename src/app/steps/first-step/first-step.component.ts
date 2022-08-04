@@ -11,21 +11,9 @@ import { DialogComponent } from 'src/app/dialog/dialog.component';
 })
 export class FirstStepComponent implements OnInit {
   myForm: FormGroup | any;
-  firstForm: FormGroup | any;
-  secondForm: FormGroup | any;
-  thirdForm: FormGroup | any;
-
-
-
-  countries = [
-    { name: 'Germany', value: 'g', extradetails: true },
-    { name: 'USA', value: 'u', extradetails: false },
-    { name: 'Canada', value: 'c', extradetails: true },
-    { name: 'England', value: 'e', extradetails: false }
-  ];
-
-
-  selectedCountry = this.countries[0].name;
+  firstStep: FormGroup | any;
+  secondStep: FormGroup | any;
+  lastStep: FormGroup | any;
 
   isEditable = false;
   inputVisible = true;
@@ -44,6 +32,16 @@ export class FirstStepComponent implements OnInit {
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
+
+  countries = [
+    { name: 'Germany', value: 'g', extradetails: true },
+    { name: 'USA', value: 'u', extradetails: false },
+    { name: 'Canada', value: 'c', extradetails: true },
+    { name: 'England', value: 'e', extradetails: false }
+  ];
+
+  selectedCountry = this.countries[0].name;
+
   constructor(
     private _formBuilder: FormBuilder,
     private dialog: MatDialog,
@@ -58,8 +56,8 @@ export class FirstStepComponent implements OnInit {
       contact: [{}],
       aboutMe: [{}]
     })
-    this.firstForm = this._formBuilder.group({
-      gender: [null],
+    this.firstStep = this._formBuilder.group({
+      gender: [''],
       surename: [null, [Validators.required, Validators.maxLength(10)]],
       firstname: [null, [Validators.required, Validators.maxLength(10)]],
       country: [null, Validators.required],
@@ -67,7 +65,7 @@ export class FirstStepComponent implements OnInit {
       street: [null, [Validators.required, Validators.maxLength(25)]],
       city: [null, [Validators.required, Validators.maxLength(25)]],
     });
-    this.secondForm = this._formBuilder.group({
+    this.secondStep = this._formBuilder.group({
       tel: [null, [Validators.required, Validators.max(10000000000)]],
       email: [null, [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
       fb: [null, [Validators.required, Validators.maxLength(30)]],
@@ -75,7 +73,7 @@ export class FirstStepComponent implements OnInit {
       tweet: [null, [Validators.required, Validators.maxLength(15)]],
       youtube: [false],
     });
-    this.thirdForm = this._formBuilder.group({
+    this.lastStep = this._formBuilder.group({
       message: [null, Validators.maxLength(250)],
       agreed: [false]
     });
@@ -83,107 +81,157 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  initForms() {
+  initForms(): void {
     this.loadFromLocalStorage();
   }
 
 
-  loadFromLocalStorage() {
+  loadFromLocalStorage(): void {
     let localStorageData = localStorage.getItem('myForm');
     if (localStorageData) {
       let loadData = JSON.parse(localStorage.getItem('myForm') || '');
       if (loadData) {
-        this.firstForm.get('surename')?.setValue(loadData.data.surename);
-        this.firstForm.get('firstname')?.setValue(loadData.data.firstname);
-        this.firstForm.get('country')?.setValue(loadData.data.country);
-        this.selectedCountry = loadData.data.country;
-        this.firstForm.get('date')?.setValue(loadData.data.date);
-        if (!!loadData.data.street) {
-          this.firstForm.get('street').enable();
-          this.firstForm.get('street')?.setValue(loadData.data.street);
-        } else {
-          this.firstForm.get('street').disable();
-          this.inputVisible = false;
-        }
-        if (!!loadData.data.city) {
-          this.firstForm.get('city').enable();
-          this.firstForm.get('city')?.setValue(loadData.data.city);
-        } else {
-          this.firstForm.get('city').disable();
-          this.inputVisible = false;
-        }
-        this.firstForm.get('city')?.setValue(loadData.data.city);
-        this.secondForm.get('tel')?.setValue(loadData.contact.tel);
-        this.secondForm.get('email')?.setValue(loadData.contact.email);
-        if (!!loadData.contact.fb) {
-          this.isFbChecked = true;
-          this.secondForm.get('fb').enable();
-          this.secondForm.get('fb')?.setValue(loadData.contact.fb);
-        } else {
-          this.secondForm.get('fb').disable();
-        }
-        if (!!loadData.contact.insta) {
-          this.isInstaChecked = true;
-          this.secondForm.get('insta').enable();
-          this.secondForm.get('insta')?.setValue(loadData.contact.insta);
-        } else {
-          this.secondForm.get('insta').disable();
-        }
-        if (!!loadData.contact.tweet) {
-          this.isTweetChecked = true;
-          this.secondForm.get('tweet').enable();
-          this.secondForm.get('tweet')?.setValue(loadData.contact.tweet);
-        } else {
-          this.secondForm.get('tweet').disable();
-        }
-        this.secondForm.get('youtube').setValue(loadData.contact.youtube);
-        if (!!loadData.aboutMe.message) {
-          this.isTextAreaActive = true;
-          this.thirdForm.get('message').enable();
-          this.thirdForm.get('message')?.setValue(loadData.aboutMe.message);
-        } else {
-          this.isTextAreaActive = false;
-          this.thirdForm.get('message').disable();
-        }
-        if (loadData.aboutMe.agreed) {
-          this.isAgreedChecked = true;
-          this.thirdForm.get('agreed')?.setValue(loadData.aboutMe.agreed);
-        } else {
-          this.isAgreedChecked = false;
-          this.thirdForm.get('agreed')?.setValue(loadData.aboutMe.agreed);
-        }
+        this.handleImportGender(loadData);
+        this.handleImportCountry(loadData);
+        this.handleImportStreet(loadData);
+        this.handleImportCity(loadData);
+        this.handlePersonalData(loadData);
+        this.handleImportSocialMedia(loadData);
+        this.handleImportMessage(loadData);
+        this.handleAgreement(loadData);
       }
     } else {
-      this.secondForm.get('fb').disable();
-      this.secondForm.get('insta').disable();
-      this.secondForm.get('tweet').disable();
-      this.thirdForm.get('message').disable();
+      this.disableSocialMedia();
+    }
+  }
+
+
+  disableSocialMedia() {
+    this.secondStep.get('fb').disable();
+    this.secondStep.get('insta').disable();
+    this.secondStep.get('tweet').disable();
+    this.lastStep.get('message').disable();
+  }
+
+
+  handleImportGender(loadData: any) {
+    if (loadData.data.gender === 'Male') {
+      this.isMaleChecked = true;
+    } else if (loadData.data.gender === 'Female') {
+      this.isFemaleChecked = true;
+    }
+    this.firstStep.get('gender').setValue(loadData.data.gender);
+  }
+
+
+  handleImportCountry(loadData: any) {
+    this.firstStep.get('country')?.setValue(loadData.data.country);
+    this.selectedCountry = loadData.data.country;
+  }
+
+
+  handleImportStreet(loadData: any) {
+    if (!!loadData.data.street) {
+      this.firstStep.get('street').enable();
+      this.firstStep.get('street')?.setValue(loadData.data.street);
+    } else {
+      this.firstStep.get('street').disable();
+      this.inputVisible = false;
+    }
+  }
+
+
+  handleImportCity(loadData: any) {
+    if (!!loadData.data.city) {
+      this.firstStep.get('city').enable();
+      this.firstStep.get('city')?.setValue(loadData.data.city);
+    } else {
+      this.firstStep.get('city').disable();
+      this.inputVisible = false;
+    }
+    this.firstStep.get('city')?.setValue(loadData.data.city);
+  }
+
+
+  handleImportSocialMedia(loadData: any) {
+    if (!!loadData.contact.fb) {
+      this.isFbChecked = true;
+      this.secondStep.get('fb').enable();
+      this.secondStep.get('fb')?.setValue(loadData.contact.fb);
+    } else {
+      this.secondStep.get('fb').disable();
+    }
+    if (!!loadData.contact.insta) {
+      this.isInstaChecked = true;
+      this.secondStep.get('insta').enable();
+      this.secondStep.get('insta')?.setValue(loadData.contact.insta);
+    } else {
+      this.secondStep.get('insta').disable();
+    }
+    if (!!loadData.contact.tweet) {
+      this.isTweetChecked = true;
+      this.secondStep.get('tweet').enable();
+      this.secondStep.get('tweet')?.setValue(loadData.contact.tweet);
+    } else {
+      this.secondStep.get('tweet').disable();
+    }
+    this.secondStep.get('youtube').setValue(loadData.contact.youtube);
+  }
+
+
+  handlePersonalData(loadData: any) {
+    this.firstStep.get('surename')?.setValue(loadData.data.surename);
+    this.firstStep.get('firstname')?.setValue(loadData.data.firstname);
+    this.firstStep.get('date')?.setValue(loadData.data.date);
+    this.secondStep.get('tel')?.setValue(loadData.contact.tel);
+    this.secondStep.get('email')?.setValue(loadData.contact.email);
+  }
+
+
+  handleImportMessage(loadData: any) {
+    if (!!loadData.aboutMe.message) {
+      this.isTextAreaActive = true;
+      this.lastStep.get('message').enable();
+      this.lastStep.get('message')?.setValue(loadData.aboutMe.message);
+    } else {
+      this.isTextAreaActive = false;
+      this.lastStep.get('message').disable();
+    }
+  }
+
+
+  handleAgreement(loadData: any) {
+    if (loadData.aboutMe.agreed) {
+      this.isAgreedChecked = true;
+      this.lastStep.get('agreed')?.setValue(loadData.aboutMe.agreed);
+    } else {
+      this.isAgreedChecked = false;
+      this.lastStep.get('agreed')?.setValue(loadData.aboutMe.agreed);
     }
   }
 
 
   saveFirstForm() {
-    this.myForm.get('data').setValue(this.firstForm.value);
+    this.myForm.get('data').setValue(this.firstStep.value);
     this.isEditable = true;
   }
 
 
-  saveSecondForm() {
-    this.myForm.get('contact').setValue(this.secondForm.value);
+  saveSecondForm(): void {
+    this.myForm.get('contact').setValue(this.secondStep.value);
     this.isEditable = true;
   }
 
 
   submitForm() {
+    this.myForm.get('aboutMe').setValue(this.lastStep.value);
     this.isEditable = true;
-    this.myForm.get('aboutMe').setValue(this.thirdForm.value);
-
     this.saveFormData();
   }
 
 
   saveFormData() {
-    if (this.firstForm.valid && this.secondForm.valid && this.thirdForm.valid) {
+    if (this.firstStep.valid && this.secondStep.valid && this.lastStep.valid) {
       this.isEditable = true;
       // SNACKBAR
       this._snackBar.open('Data saved successfully!', 'Close', {
@@ -197,7 +245,7 @@ export class FirstStepComponent implements OnInit {
 
 
   openDialog() {
-    if (this.firstForm.dirty) {
+    if (this.firstStep.dirty) {
       const dialogRef = this.dialog.open(DialogComponent, {
         data: {
           title: '',
@@ -208,138 +256,147 @@ export class FirstStepComponent implements OnInit {
       });
       dialogRef.afterClosed().subscribe((result: boolean) => {
         if (result) {
-          this.firstForm.reset();
+          this.firstStep.reset();
         }
       })
     }
   }
 
 
-  handleMale(ev: any) {
-    this.isMaleChecked = ev.checked;
-  }
+  handleGender(ev: any) {
+    let gender = ev.value;
+    if (gender === 'Male') {
+      this.isMaleChecked = true;
+      this.isFemaleChecked = false;
+    } else if (gender === 'Female') {
+      this.isMaleChecked = false;
+      this.isFemaleChecked = true;
+    }
 
+    this.firstStep.get('gender').setValue(gender);
 
-  handleFemale(ev: any) {
-    this.isFemaleChecked = ev.checked;
+    console.log('EVENT', ev);
+    console.log('MAle', this.isMaleChecked);
+    console.log('Female', this.isFemaleChecked);
   }
 
 
   handleSelectedCountry(name: string, value: boolean) {
-    this.firstForm.get('country').setValue(name);
+    this.firstStep.get('country').setValue(name);
 
     this.inputVisible = value;
     if (this.inputVisible) {
-      this.firstForm.get('street')?.enable();
-      this.firstForm.get('city')?.enable();
+      this.firstStep.get('street')?.enable();
+      this.firstStep.get('city')?.enable();
     } else {
-      this.firstForm.get('street')?.disable();
-      this.firstForm.get('city')?.disable();
+      this.firstStep.get('street')?.disable();
+      this.firstStep.get('city')?.disable();
     }
   }
+
 
   handleFbInput(ev: any) {
     this.isFbChecked = ev.checked;
     if (!this.isFbChecked) {
-      this.secondForm.get('fb')?.disable();
+      this.secondStep.get('fb')?.disable();
     } else {
-      this.secondForm.get('fb')?.enable();
+      this.secondStep.get('fb')?.enable();
     }
   }
+
 
   handleInstaInput(ev: any) {
     this.isInstaChecked = ev.checked;
     if (!this.isInstaChecked) {
-      this.secondForm.get('insta')?.disable();
+      this.secondStep.get('insta')?.disable();
     } else {
-      this.secondForm.get('insta')?.enable();
+      this.secondStep.get('insta')?.enable();
     }
   }
+
 
   handleTweetInput(ev: any) {
     this.isTweetChecked = ev.checked;
     if (!this.isTweetChecked) {
-      this.secondForm.get('tweet')?.disable();
+      this.secondStep.get('tweet')?.disable();
     } else {
-      this.secondForm.get('tweet')?.enable();
+      this.secondStep.get('tweet')?.enable();
     }
   }
+
 
   handleYtInput(ev: any) {
     this.isYtChecked = ev.checked;
   }
 
+
   handleTextArea(ev: any) {
     this.isTextAreaActive = ev.checked;
-    this.thirdForm.get()
     if (!this.isTextAreaActive) {
-      this.thirdForm.get('message').disable();
+      this.lastStep.get('message').disable();
     } else {
-      this.thirdForm.get('message').enable();
+      this.lastStep.get('message').enable();
     }
   }
 
+
   handleAgree(ev: any) {
     this.isAgreedChecked = ev.checked;
-    this.thirdForm.get('agreed').setValue(ev.checked);
+    this.lastStep.get('agreed').setValue(ev.checked);
   }
 
 
   // ##### CHECK SURENAME #####
   get surenameValid() {
-    return this.firstForm.controls['surename'].dirty ||
-      this.firstForm.controls['surename'].touched;
+    return this.firstStep.controls['surename'].dirty ||
+      this.firstStep.controls['surename'].touched;
   }
 
   get maxLengthsurename() {
-    return this.firstForm.controls['surename'].errors?.['maxlength'];
+    return this.firstStep.controls['surename'].errors?.['maxlength'];
   }
 
-
-
   get surenameRequired() {
-    return this.firstForm.controls['surename'].errors?.['required'];
+    return this.firstStep.controls['surename'].errors?.['required'];
   }
 
   //  ##### CHECK FIRST NAME ##### 
   get firstNameValid() {
-    return this.firstForm.controls['firstname'].dirty || this.firstForm.controls['firstname'].touched;
+    return this.firstStep.controls['firstname'].dirty || this.firstStep.controls['firstname'].touched;
   }
 
   get maxLengthFirstname() {
-    return this.firstForm.controls['firstname'].errors?.['maxlength'];
+    return this.firstStep.controls['firstname'].errors?.['maxlength'];
   }
 
   get firstNameRequired() {
-    return this.firstForm.controls['firstname'].errors?.['required'];
+    return this.firstStep.controls['firstname'].errors?.['required'];
   }
-
 
   // ##### CHECK STREET #####
   get streetValid() {
-    return this.firstForm.controls['street'].dirty || this.firstForm.controls['street'].touched;
+    return this.firstStep.controls['street'].dirty || this.firstStep.controls['street'].touched;
   }
 
   get streetRequired() {
-    return this.firstForm.controls['street'].errors?.['required'];
+    return this.firstStep.controls['street'].errors?.['required'];
   }
 
   get streetMaxLength() {
-    return this.firstForm.controls['street'].errors?.['maxlength'];
+    return this.firstStep.controls['street'].errors?.['maxlength'];
   }
-
 
   // ##### CHECK CITY #####
   get cityValid() {
-    return this.firstForm.controls['city'].dirty || this.firstForm.controls['city'].touched;
+    return this.firstStep.controls['city'].dirty || this.firstStep.controls['city'].touched;
   }
 
   get cityRequired() {
-    return this.firstForm.controls['city'].errors?.['required'];
+    return this.firstStep.controls['city'].errors?.['required'];
   }
 
   get cityMaxLength() {
-    return this.firstForm.controls['city'].errors?.['maxlength'];
+    return this.firstStep.controls['city'].errors?.['maxlength'];
   }
 }
 

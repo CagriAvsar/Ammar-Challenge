@@ -1,16 +1,21 @@
 <mat-stepper linear #stepper>
-    <mat-step [stepControl]="firstForm" [editable]="isEditable">
+    <mat-step [stepControl]="firstStep" [editable]="isEditable">
 
         <section class="example-section">
             <mat-radio-group>
-                <mat-radio-button color="primary" class="example-margin" value="after" (change)="handleMale($event)">
-                    Male</mat-radio-button>
-                <mat-radio-button color="primary" class="example-margin" value="before" (change)="handleFemale($event)">
-                    Female</mat-radio-button>
+                <mat-radio-button color="primary" class="example-margin" value="Male" [checked]="isMaleChecked"
+                    (change)="handleGender($event)">
+                    Male
+                </mat-radio-button>
+
+                <mat-radio-button color="primary" class="example-margin" value="Female" [checked]="isFemaleChecked"
+                    (change)="handleGender($event)">
+                    Female
+                </mat-radio-button>
             </mat-radio-group>
         </section>
 
-        <form [formGroup]="firstForm">
+        <form [formGroup]="firstStep">
             <ng-template matStepLabel>First Step</ng-template>
 
             <!-- SURENAME  -->
@@ -47,27 +52,15 @@
 
             <!-- COUNTRY -->
             <div fxLayout="row" fxLayoutGap="10px">
-                <!-- <mat-form-field appearance="outline" class="w-50perc">
+                <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>Country</mat-label>
-                    <mat-select  required>
-                        <mat-option  formControlName="country" [value]="country" *ngFor="let country of countries"
+                    <mat-select [(value)]="selectedCountry" required>
+                        <mat-option [value]="country.name" *ngFor="let country of countries"
                             (click)="handleSelectedCountry(country.name, country.extradetails)">
                             {{country.name}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field> -->
-
-                <!-- ############## -->
-                <mat-form-field appearance="outline" class="w-50perc">
-                    <mat-label>Country</mat-label>
-                    <mat-select  [(value)]="selectedCountry" required>
-                        <mat-option [value]="country.name" *ngFor="let country of countries"
-                        (click)="handleSelectedCountry(country.name, country.extradetails)">
-                            {{country.name}}
-                        </mat-option>
-                    </mat-select>
                 </mat-form-field>
-                <!-- ############## -->
 
                 <!-- DATE -->
                 <mat-form-field appearance="outline" class="w-50perc">
@@ -95,7 +88,6 @@
                     </small>
                 </ng-container>
 
-
                 <!-- CITY -->
                 <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>City</mat-label>
@@ -114,7 +106,7 @@
 
             <div fxLayoutAlign="end">
                 <button mat-button color="warn" (click)="openDialog()">Reset</button>
-                <button [disabled]="!firstForm.valid" mat-button matStepperNext color="primary"
+                <button [disabled]="!firstStep.valid" mat-button matStepperNext color="primary"
                     (click)='saveFirstForm()'>
                     Next
                 </button>
@@ -124,8 +116,8 @@
 
 
     <!-- ### SECOND STEP ### -->
-    <form [formGroup]="secondForm">
-        <mat-step [stepControl]="secondForm" [editable]="isEditable">
+    <form [formGroup]="secondStep">
+        <mat-step [stepControl]="secondStep" [editable]="isEditable">
             <!-- <form [formGroup]="form"> -->
             <ng-template matStepLabel>Second Step</ng-template>
 
@@ -194,7 +186,7 @@
 
             <div>
                 <button mat-button matStepperPrevious color="warn">Back</button>
-                <button mat-button matStepperNext color="primary" [disabled]="!secondForm.valid"
+                <button mat-button matStepperNext color="primary" [disabled]="!secondStep.valid"
                     (click)="saveSecondForm()">
                     Next
                 </button>
@@ -205,11 +197,12 @@
 
 
     <!-- ### LAST STEP ### -->
-    <form [formGroup]="thirdForm">
+    <form [formGroup]="lastStep">
         <mat-step>
 
             <div fxLayout="column">
-                <mat-slide-toggle [checked]="isTextAreaActive" (change)="handleTextArea($event)">I Want write Message</mat-slide-toggle>
+                <mat-slide-toggle [checked]="isTextAreaActive" (change)="handleTextArea($event)">I Want write Message
+                </mat-slide-toggle>
 
                 <mat-form-field appearance="outline" fxFlex="100">
                     <mat-label>Textarea</mat-label>
