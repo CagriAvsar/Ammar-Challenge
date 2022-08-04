@@ -3,8 +3,10 @@
 
         <section class="example-section">
             <mat-radio-group>
-                <mat-radio-button color="primary" class="example-margin" value="after">Male</mat-radio-button>
-                <mat-radio-button color="primary" class="example-margin" value="before">Female</mat-radio-button>
+                <mat-radio-button color="primary" class="example-margin" value="after" (change)="handleMale($event)">
+                    Male</mat-radio-button>
+                <mat-radio-button color="primary" class="example-margin" value="before" (change)="handleFemale($event)">
+                    Female</mat-radio-button>
             </mat-radio-group>
         </section>
 
@@ -45,15 +47,27 @@
 
             <!-- COUNTRY -->
             <div fxLayout="row" fxLayoutGap="10px">
+                <!-- <mat-form-field appearance="outline" class="w-50perc">
+                    <mat-label>Country</mat-label>
+                    <mat-select  required>
+                        <mat-option  formControlName="country" [value]="country" *ngFor="let country of countries"
+                            (click)="handleSelectedCountry(country.name, country.extradetails)">
+                            {{country.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field> -->
+
+                <!-- ############## -->
                 <mat-form-field appearance="outline" class="w-50perc">
                     <mat-label>Country</mat-label>
-                    <mat-select formControlName="country" required>
-                        <mat-option value="Germany" *ngFor="let country of selectedCountry"
-                            (click)="handleSelectedCountry(country.extradetails)">
+                    <mat-select  [(value)]="selectedCountry" required>
+                        <mat-option [value]="country.name" *ngFor="let country of countries"
+                        (click)="handleSelectedCountry(country.name, country.extradetails)">
                             {{country.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <!-- ############## -->
 
                 <!-- DATE -->
                 <mat-form-field appearance="outline" class="w-50perc">
@@ -132,25 +146,25 @@
             <!-- SOCIAL MEDIA -->
             <div fxLayout="row">
                 <div>
-                    <mat-checkbox (change)="handleFbInput($event)">
+                    <mat-checkbox [checked]="isFbChecked" (change)="handleFbInput($event)">
                         Facebook
                     </mat-checkbox>
                 </div>
 
                 <div>
-                    <mat-checkbox (change)="handleInstaInput($event)">
+                    <mat-checkbox [checked]="isInstaChecked" (change)="handleInstaInput($event)">
                         Instagram
                     </mat-checkbox>
                 </div>
 
                 <div>
-                    <mat-checkbox (change)="handleTweetInput($event)">
+                    <mat-checkbox [checked]="isTweetChecked" (change)="handleTweetInput($event)">
                         Twitter
                     </mat-checkbox>
                 </div>
 
                 <div>
-                    <mat-checkbox (change)="handleYtInput($event)">
+                    <mat-checkbox [checked]="isYtChecked" (change)="handleYtInput($event)">
                         Youtube
                     </mat-checkbox>
                 </div>
@@ -159,12 +173,14 @@
                     <div>
                         <mat-form-field class="w-100perc" *ngIf="isFbChecked" appearance="outline">
                             <mat-label>Facebook</mat-label>
-                            <input matInput maxlength="30" formControlName="fb" placeholder="Facebook" required="{{isFbChecked}}">
+                            <input matInput maxlength="30" formControlName="fb" placeholder="Facebook"
+                                required="{{isFbChecked}}">
                         </mat-form-field>
 
                         <mat-form-field class="w-100perc" *ngIf="isInstaChecked" appearance="outline">
                             <mat-label>Instagram</mat-label>
-                            <input matInput formControlName="insta" placeholder="Instagram" required="{{isInstaChecked}}">
+                            <input matInput formControlName="insta" placeholder="Instagram"
+                                required="{{isInstaChecked}}">
                         </mat-form-field>
 
                         <mat-form-field class="w-100perc" *ngIf="isTweetChecked" appearance="outline">
@@ -193,15 +209,14 @@
         <mat-step>
 
             <div fxLayout="column">
-                <mat-slide-toggle (change)="handleTextArea($event)">I Want write Message</mat-slide-toggle>
+                <mat-slide-toggle [checked]="isTextAreaActive" (change)="handleTextArea($event)">I Want write Message</mat-slide-toggle>
 
                 <mat-form-field appearance="outline" fxFlex="100">
                     <mat-label>Textarea</mat-label>
-                    <textarea matInput maxlength="250" rows="5"
-                    formControlName="message"></textarea>
+                    <textarea matInput maxlength="250" rows="5" formControlName="message"></textarea>
                 </mat-form-field>
 
-                <mat-checkbox (change)="handleAgree($event)">
+                <mat-checkbox [checked]="isAgreedChecked" (change)="handleAgree($event)">
                     I Agree
                 </mat-checkbox>
             </div>

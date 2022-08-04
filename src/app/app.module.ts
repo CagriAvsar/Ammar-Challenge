@@ -29,7 +29,7 @@ import { MatStepperModule } from '@angular/material/stepper';
     BrowserAnimationsModule,
     FlexLayoutModule,
     FormsModule,
-    MatStepperModule
+    MatStepperModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

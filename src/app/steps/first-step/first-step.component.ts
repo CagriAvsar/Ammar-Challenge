@@ -17,27 +17,28 @@ export class FirstStepComponent implements OnInit {
 
 
 
-  selectedCountry = [
+  countries = [
     { name: 'Germany', value: 'g', extradetails: true },
     { name: 'USA', value: 'u', extradetails: false },
     { name: 'Canada', value: 'c', extradetails: true },
     { name: 'England', value: 'e', extradetails: false }
   ];
 
-  socialMediaSelect = [
-    { name: 'Facebook', value: 'fb', checkedBox: false },
-    { name: 'Instagram', value: 'insta', checkedBox: false },
-    { name: 'Twitter', value: 'tweet', checkedBox: false },
-    { name: 'Youtube', value: 'fb', checkedBox: false }
-  ]
+
+  selectedCountry = this.countries[0].name;
 
   isEditable = false;
   inputVisible = true;
+
+  isMaleChecked = false;
+  isFemaleChecked = false;
+
   isFbChecked = false;
   isInstaChecked = false;
   isTweetChecked = false;
   isYtChecked = false;
   isTextAreaActive = false;
+  isAgreedChecked = false;
 
   //##### SNACKBAR #####
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
@@ -61,7 +62,7 @@ export class FirstStepComponent implements OnInit {
       gender: [null],
       surename: [null, [Validators.required, Validators.maxLength(10)]],
       firstname: [null, [Validators.required, Validators.maxLength(10)]],
-      country: ['Germany', Validators.required],
+      country: [null, Validators.required],
       date: [null, Validators.required],
       street: [null, [Validators.required, Validators.maxLength(25)]],
       city: [null, [Validators.required, Validators.maxLength(25)]],
@@ -88,50 +89,68 @@ export class FirstStepComponent implements OnInit {
 
 
   loadFromLocalStorage() {
-    let x = localStorage.getItem('myForm');
-    if (x) {
+    let localStorageData = localStorage.getItem('myForm');
+    if (localStorageData) {
       let loadData = JSON.parse(localStorage.getItem('myForm') || '');
-      console.log(loadData, 'local storage');
-
       if (loadData) {
-        this.firstForm.get('surename')?.setValue(loadData.surename);
-        this.firstForm.get('firstname')?.setValue(loadData.firstname);
-        this.firstForm.get('country')?.setValue(loadData.country);
-        this.firstForm.get('date')?.setValue(loadData.date);
-        this.firstForm.get('street')?.setValue(loadData.street);
-        this.firstForm.get('city')?.setValue(loadData.city);
-        this.secondForm.get('tel')?.setValue(loadData.tel);
-        this.secondForm.get('email')?.setValue(loadData.email);
-        this.thirdForm.get('message')?.setValue(loadData.message);
-        this.thirdForm.get('agreed')?.setValue(loadData.agreed);
-        if (!!loadData.fb) {
+        this.firstForm.get('surename')?.setValue(loadData.data.surename);
+        this.firstForm.get('firstname')?.setValue(loadData.data.firstname);
+        this.firstForm.get('country')?.setValue(loadData.data.country);
+        this.selectedCountry = loadData.data.country;
+        this.firstForm.get('date')?.setValue(loadData.data.date);
+        if (!!loadData.data.street) {
+          this.firstForm.get('street').enable();
+          this.firstForm.get('street')?.setValue(loadData.data.street);
+        } else {
+          this.firstForm.get('street').disable();
+          this.inputVisible = false;
+        }
+        if (!!loadData.data.city) {
+          this.firstForm.get('city').enable();
+          this.firstForm.get('city')?.setValue(loadData.data.city);
+        } else {
+          this.firstForm.get('city').disable();
+          this.inputVisible = false;
+        }
+        this.firstForm.get('city')?.setValue(loadData.data.city);
+        this.secondForm.get('tel')?.setValue(loadData.contact.tel);
+        this.secondForm.get('email')?.setValue(loadData.contact.email);
+        if (!!loadData.contact.fb) {
           this.isFbChecked = true;
           this.secondForm.get('fb').enable();
-          this.secondForm.get('fb')?.setValue(loadData.fb);
+          this.secondForm.get('fb')?.setValue(loadData.contact.fb);
         } else {
           this.secondForm.get('fb').disable();
         }
-        if (!!loadData.insta) {
+        if (!!loadData.contact.insta) {
           this.isInstaChecked = true;
           this.secondForm.get('insta').enable();
-          this.secondForm.get('insta')?.setValue(loadData.insta);
+          this.secondForm.get('insta')?.setValue(loadData.contact.insta);
         } else {
           this.secondForm.get('insta').disable();
         }
-        if (!!loadData.tweet) {
+        if (!!loadData.contact.tweet) {
           this.isTweetChecked = true;
           this.secondForm.get('tweet').enable();
-          this.secondForm.get('tweet')?.setValue(loadData.tweet);
+          this.secondForm.get('tweet')?.setValue(loadData.contact.tweet);
         } else {
           this.secondForm.get('tweet').disable();
         }
-        this.secondForm.get('youtube').setValue(loadData.youtube);
-        if (!!loadData.message) {
+        this.secondForm.get('youtube').setValue(loadData.contact.youtube);
+        if (!!loadData.aboutMe.message) {
           this.isTextAreaActive = true;
           this.thirdForm.get('message').enable();
-          this.thirdForm.get('message')?.setValue(loadData.message);
+          this.thirdForm.get('message')?.setValue(loadData.aboutMe.message);
         } else {
+          this.isTextAreaActive = false;
           this.thirdForm.get('message').disable();
+        }
+        if (loadData.aboutMe.agreed) {
+          this.isAgreedChecked = true;
+          this.thirdForm.get('agreed')?.setValue(loadData.aboutMe.agreed);
+        } else {
+          this.isAgreedChecked = false;
+          this.thirdForm.get('agreed')?.setValue(loadData.aboutMe.agreed);
         }
       }
     } else {
@@ -143,32 +162,27 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-
   saveFirstForm() {
     this.myForm.get('data').setValue(this.firstForm.value);
     this.isEditable = true;
-    console.log('myform', this.myForm.value)
   }
 
+
   saveSecondForm() {
-    console.log('second', this.secondForm.value);
     this.myForm.get('contact').setValue(this.secondForm.value);
     this.isEditable = true;
-    console.log('myform 2', this.myForm.value)
   }
+
 
   submitForm() {
     this.isEditable = true;
     this.myForm.get('aboutMe').setValue(this.thirdForm.value);
-    console.log('myform 3', this.myForm.value)
 
     this.saveFormData();
   }
 
 
   saveFormData() {
-    console.log('1', this.firstForm.valid, '2', this.secondForm.valid, '3', this.thirdForm.valid);
-
     if (this.firstForm.valid && this.secondForm.valid && this.thirdForm.valid) {
       this.isEditable = true;
       // SNACKBAR
@@ -176,17 +190,14 @@ export class FirstStepComponent implements OnInit {
         horizontalPosition: this.horizontalPosition,
         verticalPosition: this.verticalPosition,
       });
-      
       localStorage.setItem('myForm', JSON.stringify(this.myForm.value));
     }
-    console.log(this.myForm.value);
-
+    console.log('Your Data', this.myForm.value);
   }
 
 
   openDialog() {
     if (this.firstForm.dirty) {
-      //-----set timeout ?
       const dialogRef = this.dialog.open(DialogComponent, {
         data: {
           title: '',
@@ -195,18 +206,28 @@ export class FirstStepComponent implements OnInit {
         width: '350px',
         height: '220px'
       });
-
       dialogRef.afterClosed().subscribe((result: boolean) => {
         if (result) {
           this.firstForm.reset();
-        } else {
-          //bleibt dein Form
         }
       })
     }
   }
 
-  handleSelectedCountry(value: boolean) {
+
+  handleMale(ev: any) {
+    this.isMaleChecked = ev.checked;
+  }
+
+
+  handleFemale(ev: any) {
+    this.isFemaleChecked = ev.checked;
+  }
+
+
+  handleSelectedCountry(name: string, value: boolean) {
+    this.firstForm.get('country').setValue(name);
+
     this.inputVisible = value;
     if (this.inputVisible) {
       this.firstForm.get('street')?.enable();
@@ -249,9 +270,8 @@ export class FirstStepComponent implements OnInit {
   }
 
   handleTextArea(ev: any) {
-    // console.log('EVENT', ev);
     this.isTextAreaActive = ev.checked;
-
+    this.thirdForm.get()
     if (!this.isTextAreaActive) {
       this.thirdForm.get('message').disable();
     } else {
@@ -260,13 +280,10 @@ export class FirstStepComponent implements OnInit {
   }
 
   handleAgree(ev: any) {
+    this.isAgreedChecked = ev.checked;
     this.thirdForm.get('agreed').setValue(ev.checked);
   }
 
-
-  openSnackBar() {
-
-  }
 
   // ##### CHECK SURENAME #####
   get surenameValid() {
