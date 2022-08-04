@@ -11,7 +11,6 @@ import { DialogComponent } from './dialog/dialog.component';
 import { MainComponent } from './main/main.component';
 import { StepsModule } from './steps/steps.module';
 import { MatStepperModule } from '@angular/material/stepper';
-import { SnackbarComponent } from './snackbar/snackbar.component';
 
 
 @NgModule({
@@ -19,7 +18,6 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
     AppComponent,
     DialogComponent,
     MainComponent,
-    SnackbarComponent,
   ],
   imports: [
     BrowserModule,

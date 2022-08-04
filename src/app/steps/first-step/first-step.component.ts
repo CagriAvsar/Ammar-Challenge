@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { DialogComponent } from 'src/app/dialog/dialog.component';
-import { SnackbarComponent } from 'src/app/snackbar/snackbar.component';
 
 @Component({
   selector: 'app-first-step',
@@ -41,7 +39,9 @@ export class FirstStepComponent implements OnInit {
   isYtChecked = false;
   isTextAreaActive = false;
 
-  durationInSeconds = 5;
+  //##### SNACKBAR #####
+  horizontalPosition: MatSnackBarHorizontalPosition = 'center';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -86,7 +86,7 @@ export class FirstStepComponent implements OnInit {
     this.loadFromLocalStorage();
   }
 
-  
+
   loadFromLocalStorage() {
     let x = localStorage.getItem('myForm');
     if (x) {
@@ -171,10 +171,12 @@ export class FirstStepComponent implements OnInit {
 
     if (this.firstForm.valid && this.secondForm.valid && this.thirdForm.valid) {
       this.isEditable = true;
-
-      this._snackBar.openFromComponent(SnackbarComponent, {
-        duration: this.durationInSeconds * 1000,
+      // SNACKBAR
+      this._snackBar.open('Data saved successfully!', 'Close', {
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
       });
+      
       localStorage.setItem('myForm', JSON.stringify(this.myForm.value));
     }
     console.log(this.myForm.value);
