@@ -184,7 +184,7 @@
 
             </div>
 
-            <div>
+            <div fxLayoutAlign="end">
                 <button mat-button matStepperPrevious color="warn">Back</button>
                 <button mat-button matStepperNext color="primary" [disabled]="!secondStep.valid"
                     (click)="saveSecondForm()">
@@ -214,8 +214,8 @@
                 </mat-checkbox>
             </div>
 
-            <div>
-                <button mat-button matStepperPrevious color="accent">Back</button>
+            <div fxLayoutAlign="end">
+                <button mat-button matStepperPrevious color="warn">Back</button>
                 <button mat-button color="primary" (click)="submitForm()">Save</button>
             </div>
         </mat-step>

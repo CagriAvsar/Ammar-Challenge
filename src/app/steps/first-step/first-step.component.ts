@@ -91,14 +91,14 @@ export class FirstStepComponent implements OnInit {
     if (localStorageData) {
       let loadData = JSON.parse(localStorage.getItem('myForm') || '');
       if (loadData) {
-        this.handleImportGender(loadData);
-        this.handleImportCountry(loadData);
-        this.handleImportStreet(loadData);
-        this.handleImportCity(loadData);
-        this.handlePersonalData(loadData);
-        this.handleImportSocialMedia(loadData);
-        this.handleImportMessage(loadData);
-        this.handleAgreement(loadData);
+        this.loadGender(loadData);
+        this.loadCountry(loadData);
+        this.loadStreet(loadData);
+        this.loadCity(loadData);
+        this.loadPersonalData(loadData);
+        this.loadSocialMedia(loadData);
+        this.loadMessage(loadData);
+        this.loadAgreement(loadData);
       }
     } else {
       this.disableSocialMedia();
@@ -114,7 +114,7 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handleImportGender(loadData: any) {
+  loadGender(loadData: any) {
     if (loadData.data.gender === 'Male') {
       this.isMaleChecked = true;
     } else if (loadData.data.gender === 'Female') {
@@ -124,13 +124,13 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handleImportCountry(loadData: any) {
+  loadCountry(loadData: any) {
     this.firstStep.get('country')?.setValue(loadData.data.country);
     this.selectedCountry = loadData.data.country;
   }
 
 
-  handleImportStreet(loadData: any) {
+  loadStreet(loadData: any) {
     if (!!loadData.data.street) {
       this.firstStep.get('street').enable();
       this.firstStep.get('street')?.setValue(loadData.data.street);
@@ -141,7 +141,7 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handleImportCity(loadData: any) {
+  loadCity(loadData: any) {
     if (!!loadData.data.city) {
       this.firstStep.get('city').enable();
       this.firstStep.get('city')?.setValue(loadData.data.city);
@@ -153,7 +153,7 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handleImportSocialMedia(loadData: any) {
+  loadSocialMedia(loadData: any) {
     if (!!loadData.contact.fb) {
       this.isFbChecked = true;
       this.secondStep.get('fb').enable();
@@ -179,7 +179,7 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handlePersonalData(loadData: any) {
+  loadPersonalData(loadData: any) {
     this.firstStep.get('surename')?.setValue(loadData.data.surename);
     this.firstStep.get('firstname')?.setValue(loadData.data.firstname);
     this.firstStep.get('date')?.setValue(loadData.data.date);
@@ -188,7 +188,7 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handleImportMessage(loadData: any) {
+  loadMessage(loadData: any) {
     if (!!loadData.aboutMe.message) {
       this.isTextAreaActive = true;
       this.lastStep.get('message').enable();
@@ -200,7 +200,7 @@ export class FirstStepComponent implements OnInit {
   }
 
 
-  handleAgreement(loadData: any) {
+  loadAgreement(loadData: any) {
     if (loadData.aboutMe.agreed) {
       this.isAgreedChecked = true;
       this.lastStep.get('agreed')?.setValue(loadData.aboutMe.agreed);
@@ -245,10 +245,10 @@ export class FirstStepComponent implements OnInit {
 
 
   openDialog() {
-    if (this.firstStep.dirty) {
+    if (this.firstStep.dirty || !this.firstStep.prisma) {
       const dialogRef = this.dialog.open(DialogComponent, {
         data: {
-          title: '',
+          title: 'Reset Form',
           content: 'Are you sure ? Everything will be deleted !'
         },
         width: '350px',
@@ -272,12 +272,7 @@ export class FirstStepComponent implements OnInit {
       this.isMaleChecked = false;
       this.isFemaleChecked = true;
     }
-
     this.firstStep.get('gender').setValue(gender);
-
-    console.log('EVENT', ev);
-    console.log('MAle', this.isMaleChecked);
-    console.log('Female', this.isFemaleChecked);
   }
 
 
